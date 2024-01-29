@@ -11,3 +11,5 @@ pub mod tabs;
 
 #[cfg(feature = "firefox")]
 pub mod contextual_identities;
+
+pub mod context_menus;
