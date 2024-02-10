@@ -1,15 +1,16 @@
 use serde_derive::{Serialize};
 use crate::Error;
-use crate::tabs::prelude::sys;
 use crate::util::{js_from_serde, object_from_js, serde_from_js};
+pub use web_extensions_sys as sys;
 
 mod context_type;
 mod item_type;
 mod on_clicked;
 mod on_click_data;
+mod create_properties;
 
 pub use self::{
-    context_type::*, item_type::*, on_clicked::*, on_click_data::*,
+    context_type::*, item_type::*, on_clicked::*, on_click_data::*, create_properties::*
 };
 
 pub fn context_menus() -> sys::ContextMenus {
@@ -54,56 +55,4 @@ pub fn update(menu_item_id: &String, update_properties: &CreateProperties<'_>) -
         .update(&js_id, object_from_js(&js_props)?, None);
 
     Ok(())
-}
-
-#[derive(Debug, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub struct CreateProperties<'a> {
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub checked: Option<bool>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub contexts: Option<&'a [ContextType]>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub document_url_patters: Option<&'a [&'a String]>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub enabled: Option<bool>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub id: Option<&'a str>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub parent_id: Option<&'a str>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub target_url_patters: Option<&'a [&'a String]>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub title: Option<&'a str>,
-
-    #[serde(skip_serializing_if = "Option::is_none", rename = "type")]
-    pub kind: Option<ItemType>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub visible: Option<bool>,
-}
-
-impl Default for CreateProperties<'_>  {
-    fn default() -> Self {
-        CreateProperties {
-            checked: None,
-            contexts: None,
-            document_url_patters: None,
-            enabled: None,
-            id: None,
-            parent_id: None,
-            target_url_patters: None,
-            title: None,
-            kind: None,
-            visible: None,
-        }
-    }
 }
