@@ -9,7 +9,7 @@ pub fn on_closed() -> OnClosed {
 
 pub struct OnClosed(sys::EventTarget);
 
-pub struct OnClosedEventListener<'a>(EventListener<'a, dyn FnMut(JsValue)>);
+pub struct OnClosedEventListener<'a>(EventListener<'a, dyn FnMut(JsValue, JsValue)>);
 
 impl OnClosedEventListener<'_> {
     pub fn forget(self) {
@@ -20,10 +20,13 @@ impl OnClosedEventListener<'_> {
 impl OnClosed {
     pub fn add_listener<L>(&self, mut listener: L) ->OnClosedEventListener
         where
-            L: FnMut(String) + 'static
+            L: FnMut(String, bool) + 'static
     {
-        let listener = Closure::new(move |id: JsValue| {
-            listener(id.as_string().unwrap())
+        let listener = Closure::new(move |id: JsValue, by_user:JsValue| {
+            listener(
+                id.as_string().unwrap(),
+                by_user.as_bool().unwrap()
+            )
         });
         OnClosedEventListener(EventListener::raw_new(&self.0, listener))
     }

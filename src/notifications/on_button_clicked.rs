@@ -20,12 +20,12 @@ impl OnButtonClickedEventListener<'_> {
 impl OnButtonClicked {
     pub fn add_listener<L>(&self, mut listener: L) -> OnButtonClickedEventListener
         where
-            L: FnMut(String, f64) + 'static
+            L: FnMut(String, i32) + 'static
     {
         let listener = Closure::new(move |id: JsValue, index: JsValue| {
             listener(
                 id.as_string().unwrap(),
-                index.as_f64().unwrap()
+                index.as_f64().unwrap() as i32
             )
         });
         OnButtonClickedEventListener(EventListener::raw_new(&self.0, listener))
