@@ -13,3 +13,5 @@ pub mod tabs;
 pub mod contextual_identities;
 
 pub mod context_menus;
+
+pub mod notifications;
