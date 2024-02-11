@@ -1,5 +1,6 @@
 use serde_derive::Serialize;
 use wasm_bindgen::JsValue;
+use crate::Error;
 
 #[derive(Debug, PartialEq, Eq, Serialize)]
 pub enum PermissionLevel {
@@ -13,13 +14,14 @@ pub enum PermissionLevel {
     Denied,
 }
 
-impl From<JsValue> for PermissionLevel {
-    fn from(value: JsValue) -> Self {
-        let value = value.as_string().expect("Given input is not a string");
-        match value.as_str() {
-            "granted" => PermissionLevel::Granted,
-            "denied" => PermissionLevel::Denied,
-            _=> panic!("Unknown permission level")
+impl TryFrom<JsValue> for PermissionLevel {
+    type Error = Error;
+
+    fn try_from(value: JsValue) -> Result<Self, Self::Error> {
+        match value.as_string().unwrap().as_str() {
+            "granted" => Ok(PermissionLevel::Granted),
+            "denied" => Ok(PermissionLevel::Denied),
+            _=> Err(Error::Js(value))
         }
     }
 }

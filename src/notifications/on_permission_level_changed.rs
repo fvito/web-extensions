@@ -22,8 +22,8 @@ impl OnPermissionLevelChanged {
         where
             L: FnMut(PermissionLevel) + 'static
     {
-        let listener = Closure::new(move |id| {
-            listener(PermissionLevel::from(id))
+        let listener = Closure::new(move |id: JsValue| {
+            listener(PermissionLevel::try_from(id).unwrap())
         });
         OnPermissionLevelChangedEventListener(EventListener::raw_new(&self.0, listener))
     }
